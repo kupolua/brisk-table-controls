@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Tab, Input, Form, Button, Label, Dropdown, Menu, Segment, Loader, Table, Checkbox } from 'semantic-ui-react';
 import axios from 'axios';
+import {setSourceList} from "./actions/setSourceList";
 
 const jp = require('jsonpath');
 
@@ -133,17 +136,26 @@ class ControlPanel extends Component {
         }
       }
     });
-    // [{"fieldName":"firstName","columnName":"firstName","columnWidth":15}],
 
-    this.setState({ dropdownText: value, isConfigurator: true, columnTitles, customFields });
+    this.setState({ dropdownText: value, path: '$..' + value, isConfigurator: true, columnTitles, customFields });
 
     // console.log('displayConfigurator (value) {, dataSource', dataSource[0][0]);
     // console.log('displayConfigurator (value) {, columnTitles', columnTitles);
-    console.log('displayConfigurator (value) {, customFields', customFields);
+    // console.log('displayConfigurator (value) {, customFields', customFields);
   }
 
   createTable() {
-    console.log('createTable() {, this.state.customFields', this.state.customFields);
+    let customFields = Object.values(this.state.customFields).filter(field => field.isColumnVisible);
+
+    console.log('createTable() {', customFields);
+
+    this.props.setSourceList({
+      source: this.state.source,
+      dataPath: this.state.path,
+      rowsPerPage: 10, //todo: implement user choice
+      columnTextLength: this.state.maxLength,
+      customFields,
+    })
   }
 
   renderBody() {
@@ -210,7 +222,7 @@ class ControlPanel extends Component {
     ];
 
     return (
-      <div style={{ flexDirection: 'column', justifyContent : 'center', alignItem: 'center', margin: 20 }}>
+      <div style={{ flexDirection: 'column', justifyContent : 'center', alignItem: 'center', marginTop: 20, marginBottom: 30, }}>
         <Segment>
           <Tab panes={panes} onTabChange={(e, data) => this.setState({
             url: undefined,
@@ -282,4 +294,12 @@ class ControlPanel extends Component {
   }
 }
 
-export default ControlPanel;
+function mapStateToProps({ dataSource }) {
+  return { dataSource };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ setSourceList }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ControlPanel);
