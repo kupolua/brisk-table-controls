@@ -31,6 +31,7 @@ function getCustomField(fieldKey, customFieldsList) {
                     key: rowData.fieldName,
                     label: rowData.columnName,
                     sortable: true,
+                    className: 'important-column',
                     style: {
                         width: Math.ceil(rowData.columnWidth),
                     },
@@ -124,8 +125,6 @@ function convertToDataTable(data, dataPath = '$..teachers', rowsPerPage = 5, col
     tableTitle = dataPath.replace(/^\$../, '');
     headerTable = customFieldsList ? getCustomHeaderTable(dataSource[0][0], customFieldsList) : getHeaderTable(dataSource[0][0]);
 
-    console.log('headerTable', headerTable);
-
     dataSource[0].forEach((dataSourceRow, i) => {
         dataRow = Object.constructor();
         hash = md5(new Date() + Math.random() + i);
@@ -152,6 +151,8 @@ function convertToDataTable(data, dataPath = '$..teachers', rowsPerPage = 5, col
 
     isEqualHashes(dataSource[0][0].hash, dataTable[0].hash);
 
+    console.log('function convertToDataTable() { headerTable', headerTable);
+
     return {
         originalDataSource: dataSource[0],
         dataSource: dataTable,
@@ -169,6 +170,7 @@ function convertToDataTable(data, dataPath = '$..teachers', rowsPerPage = 5, col
         isSorted: false,
         isAllRowsSelected: false,
         toUnselectAll: false,
+        updatedHash: md5(Date.now())
     };
 }
 

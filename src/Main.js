@@ -20,7 +20,7 @@ class Main extends Component {
             <BriskTable />
           </div>
           <div style={{marginTop: 90}}>
-            version 0.1.0
+            version 0.1.1
           </div>
         </div>
     );

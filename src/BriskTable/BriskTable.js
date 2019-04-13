@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
-import {deepOrange500} from 'material-ui/styles/colors';
+import { deepOrange500 } from 'material-ui/styles/colors';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {Card, CardHeader} from 'material-ui/Card';
+import { Card } from 'material-ui/Card';
 import DataTables from 'material-ui-datatables';
 
 import { ROW_SIZE } from '../constants/CONSTANTS';
@@ -112,6 +112,7 @@ class BriskTable extends Component {
             isFiltered: false,
             isAllRowsSelected: false,
             toUnselectAll: false,
+            updatedHash: undefined,
         };
 
         /*
@@ -144,12 +145,13 @@ class BriskTable extends Component {
     componentWillReceiveProps(nextProps) {
         if(!nextProps.dataSource.sourceListOrigin) {return}
 
-        if(!nextProps.sourceList.sourceList) {
+        if(!nextProps.sourceList.sourceList || this.state.updatedHash && this.state.updatedHash !== nextProps.dataSource.sourceListOrigin.updatedHash) {
+            console.log('initDataHandlerState, headerTable');
             this.props.initDataHandlerState(nextProps.dataSource.sourceListOrigin);
+            this.setState({ updatedHash: nextProps.dataSource.sourceListOrigin.updatedHash });
 
             return;
         }
-        console.log('componentWillReceiveProps(nextProps) {');
 
         this.setState({
             tableTitle: nextProps.sourceList.sourceList.tableTitle,
@@ -284,6 +286,7 @@ class BriskTable extends Component {
         if(!this.props.dataSource.sourceListOrigin) {return <div>Brisk Table waiting for data ...</div>};
 
         console.log('%c render brisk table', 'color: orange; display: block;');
+        console.log('render() {, this.state.columns', this.state.columns);
 
         return (
             <MuiThemeProvider muiTheme={muiTheme}>

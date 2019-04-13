@@ -53,8 +53,8 @@ class ControlPanel extends Component {
     this.state = {
       maxLength: 50,
       minLength: 10,
-      url: undefined,
-      // url: 'https://raw.githubusercontent.com/kupolua/web-presentation/master/json/db.json',
+      // url: undefined,
+      url: 'https://raw.githubusercontent.com/kupolua/web-presentation/master/json/db.json',
       json: undefined,
       source: undefined,
       path: undefined,
@@ -66,6 +66,7 @@ class ControlPanel extends Component {
       dropdownText: 'Select path',
       columnTitles: [],
       customFields: {},
+      isRefresh: false,
     };
 
     this.fetchData = this.fetchData.bind(this);
@@ -148,6 +149,8 @@ class ControlPanel extends Component {
     let customFields = Object.values(this.state.customFields).filter(field => field.isColumnVisible);
 
     console.log('createTable() {', customFields);
+
+    this.setState({ isRefresh: true });
 
     this.props.setSourceList({
       source: this.state.source,
@@ -233,6 +236,7 @@ class ControlPanel extends Component {
             isConfigurator: false,
             dropdownText: 'Select path',
             columnTitles: [],
+            isRefresh: false,
           })} />
           <Loader active={this.state.loader} />
         </Segment>
@@ -282,9 +286,9 @@ class ControlPanel extends Component {
                       </Table.Body>
                   </Table>
                   <div style={{margin: 10}}>
-                    <Button basic color='green' floated='right' onClick={() => this.createTable()}>
-                      Create table
-                    </Button>
+                     <Button basic color='green' floated='right' onClick={() => this.createTable()}>
+                        {this.state.isRefresh ? 'Refresh table' : 'Create table'}
+                      </Button>
                   </div>
                 </div>
             : null}
