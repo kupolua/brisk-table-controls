@@ -53,8 +53,8 @@ class ControlPanel extends Component {
     this.state = {
       maxLength: 50,
       minLength: 10,
-      // url: undefined,
-      url: 'https://raw.githubusercontent.com/kupolua/web-presentation/master/json/db.json',
+      url: undefined,
+      // url: 'https://raw.githubusercontent.com/kupolua/web-presentation/master/json/db.json',
       json: undefined,
       source: undefined,
       path: undefined,
