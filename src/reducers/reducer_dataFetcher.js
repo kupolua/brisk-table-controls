@@ -112,7 +112,7 @@ function isEqualHashes(origin, children) {
 
 function convertToDataTable(data, dataPath = '$..teachers', rowsPerPage = 5, columnTextLength = 20, customFields) {
     // console.log('customFields', customFields);
-    // console.log(data, dataPath, typeof rowsPerPage, rowsPerPage, typeof columnTextLength, columnTextLength, customFields);
+    console.log('convertToDataTable', data, dataPath, typeof rowsPerPage, rowsPerPage, typeof columnTextLength, columnTextLength, customFields);
     let dataSource = [];
     let dataRow = {};
     let hash;
@@ -135,7 +135,7 @@ function convertToDataTable(data, dataPath = '$..teachers', rowsPerPage = 5, col
     dataSource[0].forEach((dataSourceRow, i) => {
         dataRow ={};
 
-        for (var key in dataSourceRow) {
+        for (let key in dataSourceRow) {
             if(isVisibleField(headerTable, key) || key == 'hash') {
                 if(typeof dataSourceRow[key] === 'string' && dataSourceRow[key].length > columnTextLength && key != 'hash') {
                     dataRow[key] = dataSourceRow[key].substr(0, columnTextLength) + '...';
@@ -151,7 +151,7 @@ function convertToDataTable(data, dataPath = '$..teachers', rowsPerPage = 5, col
 
     isEqualHashes(dataSource[0][0].hash, dataTable[0].hash);
 
-    console.log('function convertToDataTable() { headerTable', headerTable);
+    // console.log('function convertToDataTable() { headerTable', headerTable);
 
     return {
         originalDataSource: dataSource[0],

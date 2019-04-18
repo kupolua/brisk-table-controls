@@ -76,7 +76,7 @@ class ControlPanel extends Component {
   }
 
   fetchData() {
-    this.setState({ error: undefined, loader: true, dropdownText: 'Select path' });
+    this.setState({ error: undefined, loader: true, dropdownText: 'Select path', customFields: [] });
 
     if(this.state.activeIndex === 0 || this.state.url) {
       if(!this.state.url) {this.setState({error: 'Empty url!', paths: [], loader: false}); return}
@@ -120,55 +120,64 @@ class ControlPanel extends Component {
     }
   };
 
-  displayConfigurator(value) {
-    // console.log('displayConfigurator (value) {, value', value);
-    let dataSource = jp.query(this.state.source, value);
+  displayConfigurator(path) {
+    let dataPath = '$..' + path;
+    let dataSource = jp.query(this.state.source, path);
     let columnTitles = Object.keys(dataSource[0][0]);
     let customFields = {};
 
     columnTitles.map(column => {
+      console.log(dataSource[0][0][column].toString().length);
+      console.log(dataSource[0][0][column].toString());
       customFields = {
         ...customFields,
         [column]: {
           fieldName: column,
           columnName: column,
           columnWidth: 10,
+          // columnWidth: dataSource[0][0][column].toString().length,
           isColumnVisible: true
         }
       }
     });
 
-    this.setState({ dropdownText: value, path: '$..' + value, isConfigurator: true, columnTitles, customFields });
+    this.setState({ dropdownText: path, path: dataPath, isConfigurator: true, columnTitles, customFields });
+
+    // console.log(this.state.source, dataPath, this.state.maxLength, customFields);
+    this.createTable(this.state.source, dataPath, this.state.maxLength, customFields);
 
     // console.log('displayConfigurator (value) {, dataSource', dataSource[0][0]);
     // console.log('displayConfigurator (value) {, columnTitles', columnTitles);
     // console.log('displayConfigurator (value) {, customFields', customFields);
   }
 
-  createTable() {
-    let customFields = Object.values(this.state.customFields).filter(field => field.isColumnVisible);
+  createTable(source, dataPath, columnTextLength, customFields) {
+    customFields = Object.values(customFields).filter(field => field.isColumnVisible);
 
     console.log('createTable() {', customFields);
 
     this.setState({ isRefresh: true });
 
     this.props.setSourceList({
-      source: this.state.source,
-      dataPath: this.state.path,
+      source,
+      dataPath,
       rowsPerPage: 10, //todo: implement user choice
-      columnTextLength: this.state.maxLength,
+      columnTextLength,
       customFields,
     })
   }
 
   renderBody() {
     return this.state.columnTitles.map((column, i) => {
+      console.log(this.state.customFields[column].isColumnVisible);
       return (
           <Table.Row key={i}>
             <Table.Cell> {column} </Table.Cell>
             <Table.Cell>
               <Input
-                  placeholder='column name'
+                  placeholder={this.state.customFields[column].columnName}
+                  disabled={!this.state.customFields[column].isColumnVisible}
+                  value={this.state.customFields[column].isColumnVisible ? this.state.customFields[column].columnName : ''}
                   onChange={ (e, { value }) => {
                     let { customFields } = this.state;
                     customFields[column].columnName = value;
@@ -179,7 +188,9 @@ class ControlPanel extends Component {
             </Table.Cell>
             <Table.Cell>
               <Input
-                  placeholder='width'
+                  placeholder={this.state.customFields[column].columnWidth}
+                  disabled={!this.state.customFields[column].isColumnVisible}
+                  value={this.state.customFields[column].isColumnVisible ? this.state.customFields[column].columnWidth : ''}
                   onChange={ (e, { value }) => {
                     let { customFields } = this.state;
                     customFields[column].columnWidth = value;
@@ -246,6 +257,7 @@ class ControlPanel extends Component {
           </Button>
         </div>
         <div style={{ marginTop: 90}}>
+          <h4>Select JSON path</h4>
           <Menu compact borderless>
             <Menu.Item as='a'>
               <Dropdown
@@ -267,10 +279,10 @@ class ControlPanel extends Component {
         </div>
         <div style={{ flexDirection: 'column', justifyContent : 'center', alignItem: 'center', marginTop: 20 }}>
           <h4>Configure</h4>
-          <Input label='max length' placeholder={this.state.maxLength} onChange={ (e, { value }) => this.setState({ maxLength: value }) } />
+          <Input label='max text length' placeholder={this.state.maxLength} onChange={ (e, { value }) => this.setState({ maxLength: value }) } />
         </div>
         <div style={{marginTop: 20}}>
-          <Input label='min length' placeholder={this.state.minLength} onChange={ (e, { value }) => this.setState({ minLength: value }) } />
+          <Input label='min text length' placeholder={this.state.minLength} onChange={ (e, { value }) => this.setState({ minLength: value }) } />
         </div>
         <div style={{ marginTop: 20 }}>
           {this.state.isConfigurator
@@ -286,8 +298,9 @@ class ControlPanel extends Component {
                       </Table.Body>
                   </Table>
                   <div style={{margin: 10}}>
-                     <Button basic color='green' floated='right' onClick={() => this.createTable()}>
-                        {this.state.isRefresh ? 'Refresh table' : 'Create table'}
+                     <Button basic color='green' floated='right' onClick={() => this.createTable(this.state.source, this.state.dataPath, this.state.maxLength, this.state.customFields)}>
+                        Refresh table
+                        {/*{this.state.isRefresh ? 'Refresh table' : 'Create table'}*/}
                       </Button>
                   </div>
                 </div>

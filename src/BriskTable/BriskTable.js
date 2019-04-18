@@ -285,14 +285,23 @@ class BriskTable extends Component {
     render() {
         if(!this.props.dataSource.sourceListOrigin) {return <div>Brisk Table waiting for data ...</div>};
 
+        let tableWidth = 0;
+
         console.log('%c render brisk table', 'color: orange; display: block;');
-        console.log('render() {, this.state.columns', this.state.columns);
+
+        if(this.state.columns.length > 0 && (this.state.columns.length * 10) !== this.state.columns.reduce((accumulator, currentValue) => {return accumulator + currentValue.style.width}, 0)) {
+            this.state.columns.forEach(column => {
+                tableWidth += column.style.width;
+            });
+        }
+
+        console.log('tableWidth', tableWidth);
 
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
                 <h2>Table</h2>
                 <div style={styles.container}>
-                    <div style={styles.component}>
+                    <div style={tableWidth > 0 ? { width: tableWidth * 2 } : styles.component}>
                         <Card style={{margin: 12}}>
                             <DataTables
                                 title={this.state.tableTitle}
