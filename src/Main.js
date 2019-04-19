@@ -4,7 +4,6 @@ import BriskTable from './BriskTable/BriskTable';
 
 const styles = {
   container: {
-    textAlign: 'left',
     margin: 30,
   },
 };
@@ -20,7 +19,7 @@ class Main extends Component {
             <BriskTable />
           </div>
           <div style={{marginTop: 90}}>
-            version 0.1.2
+            version 0.1.3
           </div>
         </div>
     );

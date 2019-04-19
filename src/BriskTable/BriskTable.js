@@ -36,6 +36,7 @@ import BriskTableFunctions from './BriskTableFunctions'
 const styles = {
     container: {
         textAlign: 'center',
+        overflowX: 'scroll',
     },
     component: {
         margin: '10px 5px',
@@ -72,7 +73,7 @@ const muiTheme = getMuiTheme({
     },
     tableHeader: {
         height: 10
-    }
+    },
 });
 
 class BriskTable extends Component {
@@ -283,7 +284,7 @@ class BriskTable extends Component {
     }
 
     render() {
-        if(!this.props.dataSource.sourceListOrigin) {return <div>Brisk Table waiting for data ...</div>};
+        if(!this.props.dataSource.sourceListOrigin) {return <div></div>};
 
         let tableWidth = 0;
 
@@ -367,17 +368,17 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         setDataPath: setDataPath,
         setDataColumnTextLength: setDataColumnTextLength,
+        initDataHandlerState: initDataHandlerState,
         setDataCustomFields: setDataCustomFields,
         dataFetchAction: dataFetchAction,
         setInitState: setInitState,
-        initDataHandlerState: initDataHandlerState,
         sortData: sortData,
         filterData: filterData,
         showPageRows: showPageRows,
         selectRowData: selectRowData,
+        setSelectedRow: setSelectedRow,
         setRowsPerPage: setRowsPerPage,
         setSelectedRows: setSelectedRows,
-        setSelectedRow: setSelectedRow,
         setAllSelectedRows: setAllSelectedRows,
         getSelectedRowsData: getSelectedRowsData,
     }, dispatch)

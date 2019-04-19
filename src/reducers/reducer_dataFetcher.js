@@ -121,8 +121,9 @@ function convertToDataTable(data, dataPath = '$..teachers', rowsPerPage = 5, col
     let customFieldsList = parseToList(customFields);
     let headerTable;
 
-    dataSource = jp.query(data, dataPath);
+    dataSource = dataPath === '$..root' ? [data] : jp.query(data, dataPath);
     tableTitle = dataPath.replace(/^\$../, '');
+    console.log('convertToDataTable::dataSource', dataSource, data);
     headerTable = customFieldsList ? getCustomHeaderTable(dataSource[0][0], customFieldsList) : getHeaderTable(dataSource[0][0]);
 
     dataSource[0].forEach((dataSourceRow, i) => {
@@ -200,13 +201,15 @@ export default function (state = {}, action) {
             return {
                 ...state,
                 sourceListOrigin:
-                    convertToDataTable(
+                    action.payload.source
+                    ? convertToDataTable(
                         action.payload.source,
                         action.payload.dataPath,
                         action.payload.rowsPerPage,
                         action.payload.columnTextLength,
                         action.payload.customFields
                     )
+                    : null
             };
     }
 
